@@ -143,7 +143,16 @@
                                 </button>
                             </td>
                             <td class="col-md-0-5">{{ $value->episode_count }} / {{$value->episode_number}} tập</td>
-                            <td class="col-md-0-5">{{$value->category->title}}</td>
+                            <td class="col-md-1-5">
+                                <select class="form-control category-select" data-movie-id="{{ $value->id }}">
+                                    @foreach($category as $cate)
+                                    <option value="{{ $cate->id }}" {{ $value->category_id == $cate->id ? 'selected' : '' }}>
+                                        {{$cate->title}}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <!-- <td class="col-md-0-5">{{$value->category->title}}</td> -->
                             <td class="col-md-1-5">
                                 @foreach ($value->movie_genre as $genre)
                                 <span class="badge bg-dark text-white">{{$genre->title}}</span>

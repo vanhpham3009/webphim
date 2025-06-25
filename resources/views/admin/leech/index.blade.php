@@ -106,8 +106,7 @@
                 <span id="content-detail"></span>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
@@ -126,7 +125,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <span id="content-detail"></span>
+                <span id="content-detail-episode"></span>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -227,23 +226,24 @@
                             <td><img src="{{$response['pathImage'].$res['poster_url']}}" style="width: 150px; height: 150px;"></td>
                             <td>{{$res['year']}}</td>
                             <td>
-                                <button type="button" data-movie_slug="{{ $res['slug'] }}" class="btn btn-primary leech_detail" data-toggle="modal" data-target="#chitietphim">
-                                    Chi tiết phim
+                                <button type="button" data-movie_slug="{{ $res['slug'] }}" class="btn btn-warning btn-sm mb-1 leech_detail" style="margin-bottom: 3px;" data-toggle="modal" data-target="#chitietphim">
+                                    Thông tin phim
                                 </button>
-                                <button type="button" data-movie_slug="{{ $res['slug'] }}" class="btn btn-primary leech_detail" data-toggle="modal" data-target="#chitietphim">
-                                    Tập phim
-                                </button>
-                                <!-- <a href="{{ route('leech-detail', $res['slug']) }}" class="btn btn-warning mb-1 btn-sm" style="margin-bottom: 3px;">Chi tiết phim</a>
                                 @php
                                 $movie = \App\Models\Movie::where('slug', $res['slug'])->first();
                                 @endphp
                                 @if (!$movie)
-                                <form method="POST" action="{{ route('leech-store', $res['slug']) }}">
+                                <form method="POST" action="{{ route('leech-store', $res['slug']) }}" style="margin-bottom: 3px;">
                                     @csrf
-                                    <button class="btn btn-success btn-sm">Thêm vào DB</button>
+                                    <button class="btn btn-success mb-1 btn-sm">Thêm vào CSDL</button>
                                 </form>
+                                @else
+                                <a href="{{ route('leech-episode', $res['slug']) }}" class="btn btn-dark mb-1 btn-sm" style="margin-bottom: 3px;">Tập phim</a>
                                 @endif
-                                <a href="{{ route('leech-episode', $res['slug']) }}" class="btn btn-dark mb-1 btn-sm" style="margin-top: 3px;">Tập phim</a> -->
+                                <!-- <button type="button" data-movie_slug="{{ $res['slug'] }}" class="btn btn-dark mb-1 btn-sm leech_detail_episode" data-toggle="modal" data-target="#tapphim">
+                                    Tập phim
+                                </button> -->
+                                <a href="{{ route('leech-detail', $res['slug']) }}" class="btn btn-info mb-1 btn-sm" style="margin-bottom: 3px;">Trang chi tiết cụ thể phim</a>
                             </td>
                         </tr>
                         @endforeach

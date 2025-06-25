@@ -94,7 +94,11 @@ class IndexController extends Controller
     {
         if (isset($_GET['search'])) {
             $keyword = $_GET['search'];
-            $movie = Movie::where('title', 'LIKE', '%' . $keyword . '%')->withCount('episode')->orderBy('updated_at', 'desc')->where('status', 1)->paginate(20);
+            $movie = Movie::where(function ($query) use ($keyword) {
+                $query->where('title', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('original_title', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('tags', 'LIKE', '%' . $keyword . '%');
+            })->withCount('episode')->orderBy('updated_at', 'DESC')->paginate(12);
             $meta_title = 'Kết quả tìm kiếm cho từ khoá: ' . $keyword;
             $meta_description = 'Kết quả tìm kiếm cho từ khóa: ' . $keyword;
             return view('pages.search', compact('movie', 'keyword', 'meta_title', 'meta_description'));
@@ -121,7 +125,7 @@ class IndexController extends Controller
         $category_slug = Category::where('slug', $slug)->first();
         $meta_title = $category_slug->title . ' - Xem ' . $category_slug->title . ' mới mhất, hay nhất';
         $meta_description = $category_slug->description;
-        $movie = Movie::where('category_id', $category_slug->id)->withCount('episode')->orderBy('updated_at', 'desc')->where('status', 1)->paginate(16);
+        $movie = Movie::where('category_id', $category_slug->id)->withCount('episode')->orderBy('updated_at', 'desc')->where('status', 1)->paginate(12);
         return view('pages/category', compact('category_slug', 'movie', 'meta_title', 'meta_description'));
     }
 
@@ -135,7 +139,7 @@ class IndexController extends Controller
         foreach ($movie_genre as $item) {
             $many_genre[] = $item->movie_id;
         }
-        $movie = Movie::whereIn('id', $many_genre)->withCount('episode')->orderBy('updated_at', 'desc')->where('status', 1)->paginate(20);
+        $movie = Movie::whereIn('id', $many_genre)->withCount('episode')->orderBy('updated_at', 'desc')->where('status', 1)->paginate(12);
         return view('pages/genre', compact('genre_slug', 'movie', 'meta_title', 'meta_description'));
     }
 
@@ -144,7 +148,7 @@ class IndexController extends Controller
         $country_slug = Country::where('slug', $slug)->first();
         $meta_title = $country_slug->title . ' - Xem phim quốc gia ' . $country_slug->title . ' mới mhất, hay nhất';
         $meta_description = $country_slug->description;
-        $movie = Movie::where('country_id', $country_slug->id)->withCount('episode')->orderBy('updated_at', 'desc')->where('status', 1)->paginate(20);
+        $movie = Movie::where('country_id', $country_slug->id)->withCount('episode')->orderBy('updated_at', 'desc')->where('status', 1)->paginate(12);
         return view('pages/country', compact('country_slug', 'movie', 'meta_title', 'meta_description'));
     }
 
@@ -218,14 +222,14 @@ class IndexController extends Controller
         $year = str_replace('-', '', $year);
         $meta_title = 'Xem phim năm ' . $year;
         $meta_description = 'Xem phim thuộc năm ' . $year . ' mới nhất, hay nhất';
-        $movie = Movie::where('year', $year)->withCount('episode')->orderBy('updated_at', 'desc')->where('status', 1)->paginate(20);
+        $movie = Movie::where('year', $year)->withCount('episode')->orderBy('updated_at', 'desc')->where('status', 1)->paginate(12);
         return view('pages/year', compact('year', 'movie', 'meta_title', 'meta_description'));
     }
 
     public function tag($tag)
     {
         $tag = str_replace('|', ' ', $tag);
-        $movie = Movie::where('tags', 'LIKE', '%' . $tag . '%')->withCount('episode')->orderBy('updated_at', 'desc')->paginate(20);
+        $movie = Movie::where('tags', 'LIKE', '%' . $tag . '%')->withCount('episode')->orderBy('updated_at', 'desc')->paginate(12);
         $meta_title = 'Tag phim ' . $tag . ' mới nhất, hay nhất';
         $meta_description = 'Xem phim có tag ' . $tag . ' mới nhất, hay nhất';
         return view('pages/tag', compact('tag', 'movie', 'meta_title', 'meta_description'));
@@ -270,7 +274,17 @@ class IndexController extends Controller
         $episode = Episode::with('movie')->where('movie_id', $movie->id)->orderBy('episode', 'DESC')->take(5)->get();
         $episode_current_list = Episode::with('movie')->where('movie_id', $movie->id)->get();
         $episode_count = $episode->count();
-        return view('pages/random', compact('movie', 'first_episode', 'episode', 'episode_count', 'relatedMovies', 'episode_current_list', 'meta_title', 'meta_description'));
+
+        session([
+            'meta_title' => $meta_title,
+            'meta_description' => $meta_description,
+            'first_episode' => $first_episode,
+            'relatedMovies' => $relatedMovies,
+            'episode' => $episode,
+            'episode_current_list' => $episode_current_list,
+            'episode_count' => $episode_count
+        ]);
+        return redirect()->route('detail', ['slug' => $movie->slug]);
     }
 
     public function add_favourite(Request $request)

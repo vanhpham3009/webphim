@@ -17,7 +17,7 @@
 </head>
 <style>
     body {
-        background: url('/uploads/logo/4b98170449d04c85367f1cf3bfd40791.png') no-repeat center center fixed;
+        background: url('uploads/logo/pngtree-national-day-film-festival-simple-gray-background-image_195524.jpg') no-repeat center center fixed;
         background-size: cover;
     }
 

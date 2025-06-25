@@ -82,21 +82,31 @@
                             <option value="1">4K</option>
                             <option value="2">SD</option>
                             <option value="3">Fancam</option>
+                            <option value="4">FHD</option>
                             @elseif($movie->resolution == 1)
                             <option value="1">4K</option>
                             <option value="0">HD</option>
                             <option value="2">SD</option>
                             <option value="3">Fancam</option>
+                            <option value="4">FHD</option>
                             @elseif($movie->resolution == 2)
                             <option value="2" selected>SD</option>
                             <option value="0">HD</option>
                             <option value="1">4K</option>
                             <option value="3">Fancam</option>
+                            <option value="4">FHD</option>
                             @elseif($movie->resolution == 3)
                             <option value="3" selected>Fancam</option>
                             <option value="0">HD</option>
                             <option value="1">4K</option>
                             <option value="2">SD</option>
+                            <option value="4">FHD</option>
+                            @elseif($movie->resolution == 4)
+                            <option value="4" selected>FHD</option>
+                            <option value="0">HD</option>
+                            <option value="1">4K</option>
+                            <option value="2">SD</option>
+                            <option value="3">Fancam</option>
                             @endif
                         </select>
                     </div>

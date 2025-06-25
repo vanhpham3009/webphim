@@ -86,6 +86,7 @@
                             <option value="1">4K</option>
                             <option value="2">SD</option>
                             <option value="3">Cam</option>
+                            <option value="4">FHD</option>
                         </select>
                     </div>
                     <div class="form-group">

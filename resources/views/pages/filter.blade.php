@@ -105,13 +105,13 @@
                             <div class="form-group">
                                 <select class="form-control combobox_filter" name="year" id="exampleFormControlSelect1">
                                     <option value="">--- Năm sản xuất ---</option>
-                                    @for ($year = 2010; $year <= $currentYear; $year++)
-                                        @if (isset($_GET['year']) && $_GET['year']==$year)
-                                        <option value="{{$_GET['year']}}" selected>{{ $year }}</option>
-                                        @else
-                                        <option value="{{$year}}">{{ $year }}</option>
-                                        @endif
-                                        @endfor
+                                    @for ($year = $currentYear; $year >= 2000; $year--)
+                                    @if (isset($_GET['year']) && $_GET['year']==$year)
+                                    <option value="{{$_GET['year']}}" selected>{{ $year }}</option>
+                                    @else
+                                    <option value="{{$year}}">{{ $year }}</option>
+                                    @endif
+                                    @endfor
                                 </select>
                             </div>
                         </div>
@@ -126,7 +126,7 @@
                         <a class="halim-thumb" href="{{route('detail', [$mov->slug])}}" title="{{$mov->title}}">
                             <figure><img class="lazy img-responsive" src="{{asset(('uploads/movie/'.$mov->image))}}" alt="{{$mov->title}}" title="{{$mov->title}}"></figure>
                             <span class="status">
-                                @if ($mov->resolution == 0) HD @elseif($mov->resolution == 1) 4K @elseif($mov->resolution == 2) SD @elseif($mov->resolution == 3) Cam @endif
+                                @if ($mov->resolution == 0) HD @elseif($mov->resolution == 1) 4K @elseif($mov->resolution == 2) SD @elseif($mov->resolution == 3) Cam @elseif($mov->resolution == 4) FHD @endif
                             </span>
                             <span class="episode"><i class="fa fa-play" aria-hidden="true"></i> {{ $mov->episode_count }} / {{$mov->episode_number}} tập</span>
                             <div class="icon_overlay"></div>

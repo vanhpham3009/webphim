@@ -57,6 +57,7 @@ Route::resource('/genre', GenreController::class);
 //country
 Route::resource('/country', CountryController::class);
 //movie
+Route::post('/update-category', [MovieController::class, 'update_category'])->name('update-category');
 Route::post('/update-country', [MovieController::class, 'update_country'])->name('update-country');
 Route::post('/update-status', [MovieController::class, 'update_status'])->name('update-status');
 Route::post('/update-hot', [MovieController::class, 'update_hot'])->name('update-hot');
@@ -70,7 +71,7 @@ Route::post('/leech-store/{slug}', [LeechMovieController::class, 'leech_store'])
 Route::get('/leech-episode/{slug}', [LeechMovieController::class, 'leech_episode'])->name('leech-episode');
 Route::post('/leech-episode-store/{slug}', [LeechMovieController::class, 'leech_episode_store'])->name('leech-episode-store');
 Route::post('/watch-leech-detail/{slug}', [LeechMovieController::class, 'watch_leech_detail'])->name('watch-leech-detail');
-
+Route::post('/watch-leech-detail-episode/{slug}', [LeechMovieController::class, 'watch_leech_detail_episode'])->name('watch-leech-detail-episode');
 //episode
 Route::resource('/episode', EpisodeController::class);
 Route::get('/add-episode/{id}', [EpisodeController::class, 'add_episode'])->name('add-episode');

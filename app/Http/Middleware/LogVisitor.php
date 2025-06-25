@@ -12,62 +12,61 @@ class LogVisitor
 {
     public function handle(Request $request, Closure $next)
     {
-        $sessionId = $request->session()->getId();
         $currentTime = Carbon::now('Asia/Ho_Chi_Minh');
         $ip = $request->ip();
         $browser = $this->getBrowser($request->header('User-Agent'));
 
-        // Khóa duy nhất kết hợp IP và trình duyệt
+        // Khóa duy nhất dựa trên IP và browser
         $uniqueKey = md5($ip . $browser);
 
-        // Kiểm tra xem kết hợp IP và trình duyệt đã có bản ghi trong ngày trước đó chưa
-        $existingLog = Activity::where('properties->ip_address', $ip)
-            ->where('properties->browser', $browser)
-            ->where('created_at', '>=', now()->subDay())
-            ->first();
-
-        if ($existingLog) {
-            // Cập nhật bản ghi hiện có với thời gian truy cập mới nhất
-            $properties = $existingLog->properties;
-            $properties['access_time'] = $currentTime;
-            $properties['device_type'] = $this->getDeviceType($request->header('User-Agent'));
-            $properties['operating_system'] = $this->getOS($request->header('User-Agent'));
-            $properties['language'] = $request->getPreferredLanguage();
-
-            $existingLog->update([
-                'updated_at' => $currentTime,
-                'properties' => $properties
-            ]);
-        } else {
-            // Tạo bản ghi mới chỉ khi chưa có kết hợp IP và trình duyệt
-            activity()
-                ->withProperties([
-                    'browser' => $browser,
-                    'ip_address' => $ip,
-                    'device_type' => $this->getDeviceType($request->header('User-Agent')),
-                    'operating_system' => $this->getOS($request->header('User-Agent')),
-                    'language' => $request->getPreferredLanguage(),
-                    'access_time' => $currentTime
-                ])
-                ->log('Visitor accessed homepage');
-        }
-
-        // Quản lý cache và cập nhật danh sách session
-        $keys = Cache::get('online_visitors_keys', []);
-        $visitorKey = 'visitor_' . $sessionId;
-
-        // Thêm session ID vào danh sách nếu chưa có
-        if (!in_array($visitorKey, $keys)) {
-            $keys[] = $visitorKey;
-            Cache::put('online_visitors_keys', $keys, now()->addMinutes(30));
-        }
-
-        // Cập nhật thông tin visitor trong cache
-        Cache::put($visitorKey, [
+        // Lưu visitor vào cache với khóa duy nhất
+        Cache::put('visitor_' . $uniqueKey, [
             'last_active' => $currentTime,
             'ip' => $ip,
             'browser' => $browser
-        ], now()->addMinutes(30));
+        ], now()->addMinutes(30)); // Tăng thời gian cache để tránh hết hạn nhanh
+
+        // Quản lý danh sách keys dựa trên uniqueKey
+        $keys = Cache::get('online_visitors_keys', []);
+        if (!in_array('visitor_' . $uniqueKey, $keys)) {
+            $keys[] = 'visitor_' . $uniqueKey;
+            Cache::put('online_visitors_keys', $keys, now()->addMinutes(30));
+        }
+
+        // Chỉ xử lý log khi truy cập trang chủ
+        if ($request->is('/')) {
+            // Kiểm tra bản ghi hiện có dựa trên IP
+            $existingLog = Activity::where('properties->ip_address', $ip)
+                ->where('properties->browser', $browser)
+                ->orderBy('updated_at', 'desc')
+                ->first();
+
+            if ($existingLog) {
+                // Cập nhật bản ghi hiện có
+                $properties = $existingLog->properties;
+                $properties['access_time'] = $currentTime;
+                $properties['device_type'] = $this->getDeviceType($request->header('User-Agent'));
+                $properties['operating_system'] = $this->getOS($request->header('User-Agent'));
+                $properties['language'] = $request->getPreferredLanguage();
+
+                $existingLog->update([
+                    'updated_at' => $currentTime,
+                    'properties' => $properties
+                ]);
+            } else {
+                // Tạo bản ghi mới nếu chưa có
+                activity()
+                    ->withProperties([
+                        'browser' => $browser,
+                        'ip_address' => $ip,
+                        'device_type' => $this->getDeviceType($request->header('User-Agent')),
+                        'operating_system' => $this->getOS($request->header('User-Agent')),
+                        'language' => $request->getPreferredLanguage(),
+                        'access_time' => $currentTime
+                    ])
+                    ->log('Visitor accessed homepage');
+            }
+        }
 
         // Cập nhật số lượng người dùng trực tuyến
         Cache::put('online_users_count', $this->getOnlineVisitorsCount(), now()->addMinutes(30));

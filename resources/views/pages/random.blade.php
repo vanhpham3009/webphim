@@ -45,14 +45,14 @@
                             <ul class="list-info-group">
                                 <li class="list-info-group-item"><span>Trạng Thái</span>:
                                     <span class="quality">
-                                        @if ($movie->resolution == 0) HD @elseif($movie->resolution == 1) 4K @elseif($movie->resolution == 2) SD @elseif($movie->resolution == 3) Cam @endif
+                                        @if ($movie->resolution == 0) HD @elseif($movie->resolution == 1) 4K @elseif($movie->resolution == 2) SD @elseif($movie->resolution == 3) Cam @elseif($movie->resolution == 4) FHD @endif
                                     </span>
                                     <span class="episode">
                                         @if ($movie->caption == 0) Vietsub @else Thuyết minh @endif
                                     </span>
                                 </li>
                                 <li class="list-info-group-item"><span>Thời lượng</span>: {{$movie->duration}}</li>
-                                <li class="list-info-group-item"><span>Số tập</span>: {{ $episode_count }} / {{$movie->episode_number}} tập</li>
+                                <li class="list-info-group-item"><span>Số tập</span>: {{ $movie->episode_count }} / {{$movie->episode_number}} tập</li>
                                 <li class="list-info-group-item"><span>Tập mới cập nhật</span>:
                                     @if($episode_count>0)
                                     @if ($movie->category_id == 3)

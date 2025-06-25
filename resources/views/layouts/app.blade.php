@@ -1090,6 +1090,32 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 </body>
 <script type="text/javascript">
     $(document).ready(function() {
+        $('.category-select').change(function() {
+            var movieId = $(this).data('movie-id');
+            var categoryId = $(this).val();
+
+            $.ajax({
+                url: "{{ route('update-category') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: movieId,
+                    category_id: categoryId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Cập nhật danh mục phim thành công!');
+                    } else {
+                        alert('Cập nhật danh mục phim thất bại!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    alert('Đã xảy ra lỗi khi cập nhật danh mục phim.');
+                }
+            });
+        });
+
         $('.country-select').change(function() {
             var movieId = $(this).data('movie-id');
             var countryId = $(this).val();
@@ -1187,6 +1213,31 @@ License URL: http://creativecommons.org/licenses/by/3.0/
             success: function(data) {
                 $('#content-title').html(data.content_title);
                 $('#content-detail').html(data.content_detail);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    })
+</script>
+
+<script>
+    $('.leech_detail_episode').click(function() {
+        var slug = $(this).data('movie_slug');
+
+        $.ajax({
+            url: "/watch-leech-detail-episode/" + slug,
+            method: "POST",
+            dataType: "JSON",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                slug: slug
+            },
+            success: function(data) {
+                $('#content-episode').html(data.content_episode);
+                $('#content-detail-episode').html(data.content_detail_episode);
             },
             error: function(xhr, status, error) {
                 console.error(error);

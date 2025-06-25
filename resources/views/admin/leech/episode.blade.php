@@ -92,7 +92,7 @@
                             <th>Link M3U8</th>
                             <th>Tên phim</th>
                             <th>Slug</th>
-                            <th>Tập phim</th>
+                            <th>Tổng số tập phim</th>
                             <th>Quản lý</th>
                         </tr>
                     </thead>
@@ -122,11 +122,6 @@
                             <td>{{$response['movie']['episode_total']}}</td>
                             <td>
                                 <form method="POST" action="{{ route('leech-episode-store', [$response['movie']['slug']]) }}">
-                                    @csrf
-                                    <input type="submit" value="Thêm tập phim" class="btn btn-success btn-sm">
-                                </form>
-                                <br>
-                                <form action="POST" action="">
                                     @csrf
                                     <input type="submit" value="Đồng bộ tập phim" class="btn btn-success btn-sm">
                                 </form>

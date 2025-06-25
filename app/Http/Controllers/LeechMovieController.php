@@ -14,6 +14,35 @@ use PhpParser\Node\Stmt\Return_;
 class LeechMovieController extends Controller
 {
 
+    public function watch_leech_detail_episode($slug, Request $request)
+    {
+        $slug = $request->slug;
+        $resp = Http::get('https://ophim1.com/phim/' . $slug)->json();
+
+        $output['content_episode'] = '<h3 style="text-align: center;text-transform: uppercase;">' . $resp['movie']['name'] . '</h3>';
+
+        $output['content_detail_episode'] = '
+            <div class="row">';
+        $firstEpisode = $resp['episodes'][0];
+        if (!empty($firstEpisode['server_data'])) {
+            $output['content_detail_episode'] .= '<div class="col-md-6">Link embed';
+            foreach ($firstEpisode['server_data'] as $server1) {
+                $output['content_detail_episode'] .= '<p>Tập ' . $server1['name'] . '</p>
+                <p><input type="text" class="form-control" value="' . $server1['link_embed'] . '"></p>';
+            }
+            $output['content_detail_episode'] .= '</div>';
+            $output['content_detail_episode'] .= '<div class="col-md-6">Link M3U8';
+            foreach ($firstEpisode['server_data'] as $server2) {
+                $output['content_detail_episode'] .= '<p>Tập ' . $server2['name'] . '</p>
+                <p><input type="text" class="form-control" value="' . $server2['link_m3u8'] . '"></p>';
+            }
+            $output['content_detail_episode'] .= '</div>';
+        }
+        $output['content_detail_episode'] .= '</div>';
+
+        echo json_encode($output);
+    }
+
     public function watch_leech_detail($slug, Request $request)
     {
         $slug = $request->slug;
@@ -84,17 +113,23 @@ class LeechMovieController extends Controller
         foreach ($response['episodes'] as $res) {
             foreach ($res['server_data'] as $res_data) {
                 if (is_numeric($res_data['name']) || strtolower($res_data['name']) == 'full') {
-                    $episode = new Episode();
-                    $episode->movie_id = $movie->id;
-                    if (strtolower($res_data['name']) == 'full') {
-                        $episode->episode = 1;
-                    } else {
-                        $episode->episode = $res_data['name'];
+                    // Xác định số tập
+                    $episodeNumber = strtolower($res_data['name']) == 'full' ? '1' : $res_data['name'];
+
+                    // Kiểm tra tập phim đã tồn tại chưa
+                    $existingEpisode = Episode::where('movie_id', $movie->id)
+                        ->where('episode', $episodeNumber)
+                        ->first();
+
+                    if (!$existingEpisode) {
+                        $episode = new Episode();
+                        $episode->movie_id = $movie->id;
+                        $episode->episode = $episodeNumber;
+                        $episode->linkphim = '<p><iframe width="560" height="315" src="' . $res_data['link_embed'] . '" frameborder="0" allowfullscreen></iframe></p>';
+                        $episode->created_at = Carbon::now('Asia/Ho_Chi_Minh');
+                        $episode->updated_at = Carbon::now('Asia/Ho_Chi_Minh');
+                        $episode->save();
                     }
-                    $episode->linkphim = '<p><iframe width="560" height="315" src="' . $res_data['link_embed'] . '" frameborder="0" allowfullscreen></iframe></p>';
-                    $episode->created_at = Carbon::now('Asia/Ho_Chi_Minh');
-                    $episode->updated_at = Carbon::now('Asia/Ho_Chi_Minh');
-                    $episode->save();
                 }
             }
         }

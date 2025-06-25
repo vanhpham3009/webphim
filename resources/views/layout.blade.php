@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 
-    <link rel="shortcut icon" href="{{ asset('uploads/logo/4b98170449d04c85367f1cf3bfd40791.png') }}" type="image/x-icon" />
     <meta name="revisit-after" content="1 days" />
     <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
     <title>{{$meta_title}}</title>
@@ -225,7 +224,7 @@
                     <div class="footer-logo">
                         <img class="img-responsive" style="mix-blend-mode: darken;" src="https://img.favpng.com/9/23/19/movie-logo-png-favpng-nRr1DmYq3SNYSLN8571CHQTEG.jpg" alt="Phim hay 2021- Xem phim hay nhất" />
                     </div>
-                    Liên hệ QC: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e5958d8c888d849ccb868aa58288848c89cb868a88">[email&#160;vanhpham3009@gmail.com]</a>
+                    Liên hệ email: <a class="__cf_email__" data-cfemail="e5958d8c888d849ccb868aa58288848c89cb868a88">[vanhpham3009@gmail.com]</a>
                 </div>
                 <div class="widget about col-xs-12 col-sm-4 col-md-5 about-section">
                     <h3 class="about-title">Giới thiệu</h3>
@@ -702,6 +701,7 @@
 
                             if (movie && (
                                     (movie.title && movie.title.toLowerCase().search(expression) != -1) ||
+                                    (movie.original_title && movie.original_title.toLowerCase().search(expression) != -1) ||
                                     (movieTags.some(tag => tag.toLowerCase().search(expression.source.toLowerCase()) != -1))
                                 )) {
                                 seenMovies.add(movie.id);
@@ -949,6 +949,25 @@
                 }
             }
         })
+    });
+</script>
+<script type="text/javascript">
+    function detectIncognito() {
+        return new Promise((resolve) => {
+            var fs = window.RequestFileSystem || window.webkitRequestFileSystem;
+            if (!fs) {
+                resolve(false);
+                return;
+            }
+            fs(window.TEMPORARY, 100, () => resolve(false), () => resolve(true));
+        });
+    }
+
+    detectIncognito().then((isIncognito) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/set-incognito?incognito=' + isIncognito, true);
+        xhr.setRequestHeader('X-Incognito', isIncognito);
+        xhr.send();
     });
 </script>
 

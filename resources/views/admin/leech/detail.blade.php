@@ -92,10 +92,11 @@
                             <th>Thể loại</th>
                             <th>Quốc gia</th>
                             <th>Năm sản xuất</th>
+                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody class="order_position">
-                        @foreach ($response_movie as $key => $res )
+                        <!-- @foreach ($response_movie as $key => $res ) -->
                         <tr>
                             <td>{{$res['name']}}</td>
                             <td>{{$res['slug']}}</td>
@@ -125,8 +126,17 @@
                                 @endforeach
                             </td>
                             <td>{{$res['year']}}</td>
+                            <td>
+                                @php
+                                $movie = \App\Models\Movie::where('slug', $res['slug'])->first();
+                                @endphp
+                                <form method="POST" action="{{ route('leech-store', $res['slug']) }}" style="margin-bottom: 3px;">
+                                    @csrf
+                                    <button class="btn btn-success mb-1 btn-sm">Thêm vào DB</button>
+                                </form>
+                            </td>
                         </tr>
-                        @endforeach
+                        <!-- @endforeach -->
                     </tbody>
                 </table>
             </div>

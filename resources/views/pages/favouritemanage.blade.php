@@ -39,7 +39,7 @@
                         <a class="halim-thumb" href="{{route('detail', [$mov->movie->slug])}}" title="{{$mov->movie->title}}">
                             <figure><img class="lazy img-responsive" src="{{asset(('uploads/movie/'.$mov->movie->image))}}" alt="{{$mov->movie->title}}" title="{{$mov->movie->title}}"></figure>
                             <span class="status">
-                                @if ($mov->resolution == 0) HD @elseif($mov->resolution == 1) 4K @elseif($mov->resolution == 2) SD @elseif($mov->resolution == 3) Cam @endif
+                                @if ($mov->resolution == 0) HD @elseif($mov->resolution == 1) 4K @elseif($mov->resolution == 2) SD @elseif($mov->resolution == 3) Cam @elseif($mov->resolution == 4) FHD @endif
                             </span>
                             <span class="episode"><i class="fa fa-play" aria-hidden="true"></i> {{ $mov->movie->episode_count }} / {{$mov->movie->episode_number}} tập</span>
                             <div class="icon_overlay"></div>

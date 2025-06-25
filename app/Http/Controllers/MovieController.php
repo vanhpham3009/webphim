@@ -22,6 +22,15 @@ class MovieController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function update_category(Request $request)
+    {
+        $data = $request->all();
+        $movie = Movie::find($data['id']);
+        $movie->category_id = $data['category_id'];
+        $movie->save();
+        return response()->json(['success' => 'Cập nhật danh mục phim thành công!']);
+    }
+
     public function update_country(Request $request)
     {
         $data = $request->all();
@@ -198,12 +207,12 @@ class MovieController extends Controller
                 'slug' => 'required|max:255',
                 'duration' => 'required|max:255',
                 'episode_number' => 'required|max:255',
-                'tags' => 'max:255',
-                'description' => 'max:255',
+                'tags' => 'nullable',
+                'description' => 'nullable',
                 'is_hot' => 'required|int',
-                'caption' => 'max:255',
-                'trailer' => 'max:255',
-                'season' => 'max:255',
+                'caption' => 'nullable',
+                'trailer' => 'nullable',
+                'season' => 'nullable',
                 'genre_id' => 'array',
                 'category_id' => 'required|int',
                 'country_id' => 'required|int',
