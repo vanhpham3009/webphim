@@ -14,7 +14,7 @@
                                 {{ session('status') }}
                             </div>
                             @endif
-                            <table class="table table-hover" id="myTable">
+                            <table class="table table-hover" id="tableDashboard">
                                 <thead>
                                     <tr>
                                         <th>STT</th>
@@ -35,11 +35,11 @@
                                         <td>{{ $activity->properties->get('device_type') }}</td>
                                         <td>{{ $activity->properties->get('operating_system') }}</td>
                                         <td>{{ $activity->properties->get('language') }}</td>
-                                        <td>
-                                            @php
-                                            $accessTime = Carbon\Carbon::parse($activity->properties['access_time']);
-                                            $now = now();
-                                            @endphp
+                                        @php
+                                        $accessTime = Carbon\Carbon::parse($activity->properties['access_time']);
+                                        $now = now();
+                                        @endphp
+                                        <td data-order="{{ $accessTime->timestamp }}">
                                             {{ $accessTime->locale('vi')->diffForHumans([
         'syntax' => \Carbon\CarbonInterface::DIFF_ABSOLUTE,
         'join' => true,

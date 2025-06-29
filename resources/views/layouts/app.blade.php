@@ -1248,7 +1248,11 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
 <script type="text/javascript">
     let table = new DataTable('#myTable');
-
+    $('#tableDashboard').DataTable({
+        "order": [
+            [6, "desc"]
+        ],
+    });
 
     function ChangeToSlug() {
         var slug;
